@@ -1,60 +1,58 @@
- 
-
 generator client {
   provider = "prisma-client"
-  output = "../src/db/generated/prisma"
+  output   = "../src/db/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-model User{
-  id String @id @default(uuid())
-  email String @unique
-  password String
-  name String
-  bookings Booking[]
-  createdAt DateTime @default(now())
-  role Role @default(CUSTOMER)
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  name          String
+  bookings      Booking[]
+  createdAt     DateTime       @default(now())
+  role          Role           @default(CUSTOMER)
   refreshTokens RefreshToken[]
-
 }
 
-model Booking{
-  id String @id @default(uuid())
-  userId String
-  user User @relation(fields:[userId],references:[id])
-  flightId String
-  flight Flight @relation(fields:[flightId],references:[id])
-  seats Int
-  status BookingStatus @default(PENDING)
-  payment Payment?
-  createdAt DateTime @default(now())
+model Booking {
+  id         String        @id @default(uuid())
+  userId     String
+  user       User          @relation(fields: [userId], references: [id])
+  flightId   String
+  flight     Flight        @relation(fields: [flightId], references: [id])
+  seats      Int
+  status     BookingStatus @default(PENDING)
+  payment    Payment?
+  passengers Passenger[]
+  createdAt  DateTime      @default(now())
 }
 
-model Flight{
-  id String @id @default(uuid())
-  flightNumber String
-  origin String
-  destination String
-  departureTime DateTime
-  arrivalTime DateTime
-  price Decimal @db.Decimal(10,2)
-  totalSeats Int
+model Flight {
+  id             String    @id @default(uuid())
+  flightNumber   String
+  origin         String
+  destination    String
+  departureTime  DateTime
+  arrivalTime    DateTime
+  price          Decimal   @db.Decimal(10, 2)
+  totalSeats     Int
   availableSeats Int
-  bookings Booking[]
-  createdAt DateTime @default(now())
+  bookings       Booking[]
+  createdAt      DateTime  @default(now())
 }
 
 model Payment {
-  id String @id @default(uuid())
-  bookingId String @unique
-  booking Booking @relation(fields:[bookingId],references:[id])
-  stripePaymentIntentId String?
-  amount Decimal @db.Decimal(10,2)
-  status paymentStatus @default(PENDING)
-  createdAt DateTime @default(now())
+  id                     String        @id @default(uuid())
+  bookingId              String        @unique
+  booking                Booking       @relation(fields: [bookingId], references: [id])
+  stripePaymentIntentId  String?
+  amount                 Decimal       @db.Decimal(10, 2)
+  status                 paymentStatus @default(PENDING)
+  createdAt              DateTime      @default(now())
 }
 
 model RefreshToken {
@@ -67,18 +65,31 @@ model RefreshToken {
   createdAt DateTime @default(now())
 }
 
-enum Role{
+model Passenger {
+  id             String   @id @default(uuid())
+  bookingId      String
+  booking        Booking  @relation(fields: [bookingId], references: [id])
+  fullName       String
+  dateOfBirth    DateTime
+  nationality    String
+  passportNumber String
+  email          String
+  contactNumber  String
+  createdAt      DateTime @default(now())
+}
+
+enum Role {
   CUSTOMER
   ADMIN
 }
 
-enum BookingStatus{
+enum BookingStatus {
   PENDING
   CONFIRMED
   CANCELLED
 }
 
-enum paymentStatus{
+enum paymentStatus {
   PENDING
   SUCCEEDED
   FAILED

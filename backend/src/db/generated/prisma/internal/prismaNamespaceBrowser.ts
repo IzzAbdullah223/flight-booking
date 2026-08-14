@@ -55,7 +55,8 @@ export const ModelName = {
   Booking: 'Booking',
   Flight: 'Flight',
   Payment: 'Payment',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  Passenger: 'Passenger'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -136,6 +137,21 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const PassengerScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  fullName: 'fullName',
+  dateOfBirth: 'dateOfBirth',
+  nationality: 'nationality',
+  passportNumber: 'passportNumber',
+  email: 'email',
+  contactNumber: 'contactNumber',
+  createdAt: 'createdAt'
+} as const
+
+export type PassengerScalarFieldEnum = (typeof PassengerScalarFieldEnum)[keyof typeof PassengerScalarFieldEnum]
 
 
 export const SortOrder = {
