@@ -37,3 +37,8 @@ export type Flight = Prisma.FlightModel
  * 
  */
 export type Payment = Prisma.PaymentModel
+/**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel

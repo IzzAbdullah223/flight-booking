@@ -17,6 +17,7 @@ model User{
   bookings Booking[]
   createdAt DateTime @default(now())
   role Role @default(CUSTOMER)
+  refreshTokens RefreshToken[]
 
 }
 
@@ -53,6 +54,16 @@ model Payment {
   stripePaymentIntentId String?
   amount Decimal @db.Decimal(10,2)
   status paymentStatus @default(PENDING)
+  createdAt DateTime @default(now())
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
   createdAt DateTime @default(now())
 }
 

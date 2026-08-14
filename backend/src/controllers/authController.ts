@@ -3,6 +3,7 @@ import jwt,{type JwtPayload, type Secret} from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 import { prisma } from '../db/prisma.js'
 import { signUpSchema } from '../schemas/authSchemas.js'
+import { issueRefreshToken } from './refreshTokenController.js'
 
 declare global{
     namespace Express{
@@ -44,24 +45,30 @@ export async function signUpPost(req: Request, res: Response) {
         }
     })
 
+    const refreshToken = await issueRefreshToken(newUser.id)
+
     jwt.sign(
         { user: { id: newUser.id, email: newUser.email, role: newUser.role, name: newUser.name } },
         process.env.SECRET_KEY as Secret,
-        { expiresIn: '24h' },
+        { expiresIn: '15m' },
         (err, token) => {
-            res.json({ token, currentUserId: newUser.id })
+            res.json({ token, refreshToken, currentUserId: newUser.id })
         }
     )
 }
 
 export async function logInPost(req: Request, res: Response) {
     const user = req.user
+    if (!user) return res.status(401).json({ error: "Not authenticated" })
+
+    const refreshToken = await issueRefreshToken(user.id)
+
     jwt.sign(
-        { user: { id: user?.id, email: user?.email, role: user?.role, name: user?.name } },
+        { user: { id: user.id, email: user.email, role: user.role, name: user.name } },
         process.env.SECRET_KEY as Secret,
-        { expiresIn: '24h' },
+        { expiresIn: '15m' },
         (err, token) => {
-            res.json({ token, currentUserId: user?.id, name: user?.name})
+            res.json({ token, refreshToken, currentUserId: user.id, name: user.name })
         }
     )
 }
