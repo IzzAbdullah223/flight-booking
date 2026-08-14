@@ -1,0 +1,75 @@
+ 
+
+generator client {
+  provider = "prisma-client"
+  output = "../src/db/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User{
+  id String @id @default(uuid())
+  email String @unique
+  password String
+  name String
+  bookings Booking[]
+  createdAt DateTime @default(now())
+  role Role @default(CUSTOMER)
+
+}
+
+model Booking{
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields:[userId],references:[id])
+  flightId String
+  flight Flight @relation(fields:[flightId],references:[id])
+  seats Int
+  status BookingStatus @default(PENDING)
+  payment Payment?
+  createdAt DateTime @default(now())
+}
+
+model Flight{
+  id String @id @default(uuid())
+  flightNumber String
+  origin String
+  destination String
+  departureTime DateTime
+  arrivalTime DateTime
+  price Decimal @db.Decimal(10,2)
+  totalSeats Int
+  availableSeats Int
+  bookings Booking[]
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id String @id @default(uuid())
+  bookingId String @unique
+  booking Booking @relation(fields:[bookingId],references:[id])
+  stripePaymentIntentId String?
+  amount Decimal @db.Decimal(10,2)
+  status paymentStatus @default(PENDING)
+  createdAt DateTime @default(now())
+}
+
+enum Role{
+  CUSTOMER
+  ADMIN
+}
+
+enum BookingStatus{
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum paymentStatus{
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
