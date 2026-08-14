@@ -11,12 +11,20 @@ export const passengerSchema = z.object({
 
 export const createBookingSchema = z.object({
     flightId: z.string().uuid(),
- 
     passengers: z.array(passengerSchema).min(1),
 })
 
 export const listBookingsQuerySchema = z.object({
     status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED']).optional(),
+    page: z.coerce.number().int().positive().default(1),
+    limit: z.coerce.number().int().positive().max(100).default(20),
+})
+
+export const adminListBookingsQuerySchema = z.object({
+    status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED']).optional(),
+    origin: z.string().min(1).optional(),
+    destination: z.string().min(1).optional(),
+    date: z.string().optional(), // ISO date - matches flight.departureTime day
     page: z.coerce.number().int().positive().default(1),
     limit: z.coerce.number().int().positive().max(100).default(20),
 })
