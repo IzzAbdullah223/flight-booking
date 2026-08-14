@@ -8,6 +8,7 @@ export const createFlightSchema = z.object({
     arrivalTime: z.coerce.date(),
     price: z.number().positive(),
     totalSeats: z.number().int().positive(),
+    airline: z.string().min(1)
 })
 
 

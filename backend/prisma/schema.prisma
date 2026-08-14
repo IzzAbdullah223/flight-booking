@@ -34,6 +34,7 @@ model Booking {
 model Flight {
   id             String    @id @default(uuid())
   flightNumber   String
+  airline        String
   origin         String
   destination    String
   departureTime  DateTime
